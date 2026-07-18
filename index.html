@@ -3,37 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>113學年度 新生班級查詢系統</title>
+    <title>115學年度 新生班級查詢系統</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; max-height: 90vh; overflow-y: auto; }
-        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }
-        input { width: 90%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
-        button { background-color: #00b900; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; width: 90%; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #f0f2f5; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            margin: 0; 
+        }
+        .container { 
+            background-color: white; 
+            padding: 40px 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            width: 90%; 
+            max-width: 450px; 
+            text-align: center; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+        }
+        /* 標題字體放大 */
+        h1 { color: #333; font-size: 30px; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
+        .subtitle { color:#666; font-size: 18px; margin-bottom: 25px; }
+        
+        /* 輸入框字體與點擊範圍放大 */
+        input { 
+            width: 100%; 
+            padding: 15px; 
+            margin-bottom: 20px; 
+            border: 2px solid #ccc; 
+            border-radius: 8px; 
+            font-size: 22px; /* 字體變大 */
+            box-sizing: border-box; 
+            text-align: center; /* 讓輸入的名字置中，更好看 */
+        }
+        /* 查詢按鈕字體與點擊範圍放大 */
+        button { 
+            background-color: #00b900; 
+            color: white; 
+            border: none; 
+            padding: 16px 20px; 
+            border-radius: 8px; 
+            font-size: 22px; /* 字體變大 */
+            font-weight: bold; 
+            cursor: pointer; 
+            width: 100%; 
+            letter-spacing: 2px;
+        }
         button:hover { background-color: #009900; }
-        #result { margin-top: 20px; text-align: left; display: none; background: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #00b900; }
-        .student-card { border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px; }
+        
+        #result { 
+            margin-top: 25px; 
+            text-align: left; 
+            display: none; 
+            background: #f9f9f9; 
+            padding: 20px; 
+            border-radius: 8px; 
+            border-left: 6px solid #00b900; 
+        }
+        .student-card { border-bottom: 1px dashed #ccc; padding-bottom: 20px; margin-bottom: 20px; }
         .student-card:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .error { color: red; margin-top: 15px; font-weight: bold; text-align: center; }
-        .loading { color: #666; margin-top: 15px; font-style: italic; }
-        .line-link { display: inline-block; margin-top: 10px; color: #00b900; font-weight: bold; text-decoration: none; border: 1px solid #00b900; padding: 5px 10px; border-radius: 5px;}
+        
+        /* 查詢結果的資料字體放大 */
+        .student-card p { 
+            font-size: 20px; 
+            line-height: 1.6; 
+            margin: 10px 0; 
+            color: #333; 
+        }
+        .error { color: red; margin-top: 20px; font-weight: bold; text-align: center; font-size: 18px; }
+        .loading { color: #666; margin-top: 20px; font-style: italic; font-size: 18px; }
+        
+        /* Line 超連結按鈕放大，變成大顆按鈕的形式 */
+        .line-link { 
+            display: block; 
+            margin-top: 20px; 
+            color: #00b900; 
+            font-weight: bold; 
+            text-decoration: none; 
+            border: 2px solid #00b900; 
+            padding: 15px 10px; 
+            border-radius: 8px; 
+            font-size: 20px; 
+            text-align: center;
+        }
         .line-link:hover { background-color: #00b900; color: white; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>新生班級查詢系統</h1>
-    <p style="color:#666; font-size: 14px;">請輸入您的姓名進行即時查詢</p>
+    <h1>115學年度<br>新生班級查詢系統</h1>
+    <p class="subtitle">請輸入您的姓名進行查詢</p>
     
     <input type="text" id="studentName" placeholder="例如：王小明" onkeypress="handleEnter(event)">
-    <button onclick="searchStudent()">查詢</button>
+    <button onclick="searchStudent()">查 詢</button>
 
     <div id="result"></div>
 </div>
 
 <script>
-    // 📢 請把下面引號內的網址，換成你從 Google Apps Script 複製過來的網頁應用程式網址！
+    // 已經替換為你提供的 Google Apps Script 專屬網址
     const gasUrl = "https://script.google.com/macros/s/AKfycbzh-eYHzze74HIcWL9cLUPxH1liLyh4Oyp6rmmawp07SHgIXbzp5vASjxN-SsRZwGuG/exec";
 
     async function searchStudent() {
@@ -46,19 +119,16 @@
             return;
         }
 
-        // 顯示連線中狀態
-        resultDiv.innerHTML = "<p class='loading'>正在連線至 Google 試算表查詢中，請稍候...</p>";
+        resultDiv.innerHTML = "<p class='loading'>正在連線查詢中，請稍候...</p>";
         resultDiv.style.display = "block";
 
         try {
-            // 向 Google Apps Script 發送請求
             const response = await fetch(`${gasUrl}?name=${encodeURIComponent(inputName)}`);
             const students = await response.json();
 
             if (students.length > 0) {
                 let htmlContent = "";
                 
-                // 處理所有查到的學生（包含同名同姓）
                 students.forEach(student => {
                     htmlContent += `
                         <div class="student-card">
@@ -73,11 +143,11 @@
                 
                 resultDiv.innerHTML = htmlContent;
             } else {
-                resultDiv.innerHTML = "<p class='error'>找不到此姓名，請確認輸入是否正確，或確認試算表中是否有此資料。</p>";
+                resultDiv.innerHTML = "<p class='error'>找不到此姓名，請確認輸入是否正確。</p>";
             }
         } catch (error) {
             console.error(error);
-            resultDiv.innerHTML = "<p class='error'>查詢失敗，請檢查 Apps Script 網址是否正確，或稍後再試。</p>";
+            resultDiv.innerHTML = "<p class='error'>查詢失敗，請稍後再試。</p>";
         }
     }
 
