@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>113學年度 新生班級查詢系統</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .container { background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; max-height: 90vh; overflow-y: auto; }
+        h1 { color: #333; font-size: 24px; margin-bottom: 20px; }
+        input { width: 90%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; box-sizing: border-box; }
+        button { background-color: #00b900; color: white; border: none; padding: 12px 20px; border-radius: 5px; font-size: 16px; cursor: pointer; width: 90%; }
+        button:hover { background-color: #009900; }
+        #result { margin-top: 20px; text-align: left; display: none; background: #f9f9f9; padding: 15px; border-radius: 5px; border-left: 5px solid #00b900; }
+        .student-card { border-bottom: 1px dashed #ccc; padding-bottom: 15px; margin-bottom: 15px; }
+        .student-card:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .error { color: red; margin-top: 15px; font-weight: bold; text-align: center; }
+        .loading { color: #666; margin-top: 15px; font-style: italic; }
+        .line-link { display: inline-block; margin-top: 10px; color: #00b900; font-weight: bold; text-decoration: none; border: 1px solid #00b900; padding: 5px 10px; border-radius: 5px;}
+        .line-link:hover { background-color: #00b900; color: white; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>新生班級查詢系統</h1>
+    <p style="color:#666; font-size: 14px;">請輸入您的姓名進行即時查詢</p>
+    
+    <input type="text" id="studentName" placeholder="例如：王小明" onkeypress="handleEnter(event)">
+    <button onclick="searchStudent()">查詢</button>
+
+    <div id="result"></div>
+</div>
+
+<script>
+    // 📢 請把下面引號內的網址，換成你從 Google Apps Script 複製過來的網頁應用程式網址！
+    const gasUrl = "https://script.google.com/macros/s/AKfycbzh-eYHzze74HIcWL9cLUPxH1liLyh4Oyp6rmmawp07SHgIXbzp5vASjxN-SsRZwGuG/exec";
+
+    async function searchStudent() {
+        const inputName = document.getElementById("studentName").value.trim();
+        const resultDiv = document.getElementById("result");
+        
+        if(!inputName) {
+            resultDiv.innerHTML = "<p class='error'>請輸入姓名！</p>";
+            resultDiv.style.display = "block";
+            return;
+        }
+
+        // 顯示連線中狀態
+        resultDiv.innerHTML = "<p class='loading'>正在連線至 Google 試算表查詢中，請稍候...</p>";
+        resultDiv.style.display = "block";
+
+        try {
+            // 向 Google Apps Script 發送請求
+            const response = await fetch(`${gasUrl}?name=${encodeURIComponent(inputName)}`);
+            const students = await response.json();
+
+            if (students.length > 0) {
+                let htmlContent = "";
+                
+                // 處理所有查到的學生（包含同名同姓）
+                students.forEach(student => {
+                    htmlContent += `
+                        <div class="student-card">
+                            <p><strong>姓名：</strong> ${student.name}</p>
+                            <p><strong>班級：</strong> ${student.className}</p>
+                            <p><strong>座號：</strong> ${student.seat} 號</p>
+                            <p><strong>導師：</strong> ${student.teacher} 老師</p>
+                            <a href="${student.lineUrl}" target="_blank" class="line-link">加入班級 Line@ 群組</a>
+                        </div>
+                    `;
+                });
+                
+                resultDiv.innerHTML = htmlContent;
+            } else {
+                resultDiv.innerHTML = "<p class='error'>找不到此姓名，請確認輸入是否正確，或確認試算表中是否有此資料。</p>";
+            }
+        } catch (error) {
+            console.error(error);
+            resultDiv.innerHTML = "<p class='error'>查詢失敗，請檢查 Apps Script 網址是否正確，或稍後再試。</p>";
+        }
+    }
+
+    function handleEnter(event) {
+        if (event.key === "Enter") {
+            searchStudent();
+        }
+    }
+</script>
+
+</body>
+</html>
